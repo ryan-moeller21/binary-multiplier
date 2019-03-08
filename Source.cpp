@@ -35,8 +35,7 @@ int * decimalToBinary(int n, int int_size)
 	// Flips the bits and adds a one
 	if (isNegative) {
 		for (int i = 0; i <= max_index; i++) {
-			// Treat the integer as a bool. If its 0 (false), make it a 1.
-			// If its a 1, make it a 0.
+			// Treat the integer as a bool. 
 			signedNum[i] = !signedNum[i];
 		}
 		appendOne(signedNum, max_index);
@@ -48,8 +47,6 @@ int * decimalToBinary(int n, int int_size)
 void add(int * multiplicand, int * product, int int_size, bool addOne)
 {
 	int carry = 0;
-	int upper = -1;
-	int lower = -1;
 	int result = -1;
 
 	for (int j = 0; j < int_size; j++) {
@@ -95,17 +92,12 @@ int * boothsAlgorithm(int a, int b, int int_size)
 {
 	int product_size = 2 * int_size;
 
-	// Multiplicand
 	int * m = decimalToBinary(a, int_size);
-
-	// Scalar
 	int * s = decimalToBinary(b, int_size);
-
-	// Product
 	int * product = new int[product_size + 1];
 
+	// Set the first half to all zeros, set the second half equal to the scalar
 	for (int i = 0; i < int_size; i++) {
-		// Set the first half to all zeros, set the second half equal to the scalar
 		product[i] = 0;
 		product[i + int_size] = s[i];
 	}
@@ -115,27 +107,24 @@ int * boothsAlgorithm(int a, int b, int int_size)
 
 	int first = -1;
 	int second = -1;
+	int * temp_m = new int[int_size];
 
 	for (int i = 0; i < int_size; i++) {
 		// Bits used to determine the action taken
 		first = product[product_size - 1];
 		second = product[product_size];
 
-		cout << i << "\t|\t";
+		cout << i << "\t|\t" << setw(30);
 
-		cout << setw(30);
-
-		// If end bits are 01, prod' = prod' + multiplicand
+		// prod' = prod' + multiplicand
 		if (first == 0 && second == 1) {
 			add(m, product, int_size, false);
 
 			cout << "prod' = prod' + multiplicand";
 		}
-		// If end bits are 10, prod' = prod' - multiplicand
-		else if (first == 1 && second == 0) {
-			int * temp_m = new int[int_size];
 
-			// A - B is equal to A + !B + 1
+		// prod' = prod' - multiplicand
+		else if (first == 1 && second == 0) {
 
 			// Invert M
 			for (int j = 0; j < int_size; j++) {
@@ -167,6 +156,17 @@ int * boothsAlgorithm(int a, int b, int int_size)
 	for (int i = 0; i < product_size; i++) {
 		retArr[i] = product[i];
 	}
+
+	// Delete allocated arrays
+	delete[] product;
+	delete[] temp_m;
+	delete[] m;
+	delete[] s;
+
+	product = nullptr;
+	temp_m = nullptr;
+	m = nullptr;
+	s = nullptr;
 
 	return retArr;
 }
